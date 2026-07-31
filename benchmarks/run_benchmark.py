@@ -1,7 +1,15 @@
-"""Level 2 benchmark: semantic capability evaluation against gold sets.
+"""Phase 6 benchmark: semantic capability evaluation per domain.
 
-Evaluates entity retrieval, relation retrieval, and metric understanding
-with precision / recall / F1 per question and per category.
+Each benchmark domain directory contains:
+- model.yaml           the semantic model under evaluation
+- questions.json       questions with type tags
+- expected_context.json expected entities/relations/metrics/evidences per question
+- evaluation.json      categories, metrics, and per-type thresholds
+
+Question types (from the post-v0.1 roadmap):
+- semantic_understanding
+- relationship_reasoning
+- business_analysis
 
 Usage:
     python benchmarks/run_benchmark.py [--domain ecommerce]
@@ -10,69 +18,69 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import yaml
-
 from semantic_runtime.core import SemanticRuntime
-from semantic_runtime.packs import load_pack
+from semantic_runtime.loaders import load
 
 BENCHMARKS = Path(__file__).resolve().parent
 
-CATEGORIES = ("entities", "relations", "metrics", "evidences")
+QUESTION_TYPES = ("semantic_understanding", "relationship_reasoning", "business_analysis")
 
 
 @dataclass(frozen=True, slots=True)
 class QuestionScore:
-    question: str
+    question_id: str
+    type: str
     scores: dict[str, float]
 
-    def __str__(self) -> str:
-        parts = "  ".join(f"{k}: {v:.3f}" for k, v in self.scores.items())
-        return f"  {self.question}\n    {parts}"
+    @property
+    def f1(self) -> float:
+        return self.scores["f1"]
 
 
 @dataclass(frozen=True, slots=True)
 class BenchmarkResult:
     questions: list[QuestionScore] = field(default_factory=list)
 
-    def average(self, category: str) -> float:
-        values = [q.scores[category] for q in self.questions]
-        return sum(values) / len(values) if values else 0.0
+    def average_by_type(self, question_type: str) -> float:
+        f1s = [q.f1 for q in self.questions if q.type == question_type]
+        return sum(f1s) / len(f1s) if f1s else 0.0
+
+    def overall(self) -> float:
+        f1s = [q.f1 for q in self.questions]
+        return sum(f1s) / len(f1s) if f1s else 0.0
 
 
-def run_domain(domain: str) -> BenchmarkResult:
-    gold_path = BENCHMARKS / domain / "gold.yaml"
-    if not gold_path.is_file():
-        raise FileNotFoundError(f"no gold set found at {gold_path}")
+def run_domain(domain: str) -> tuple[BenchmarkResult, dict]:
+    domain_dir = BENCHMARKS / domain
+    questions_doc = json.loads((domain_dir / "questions.json").read_text(encoding="utf-8"))
+    expected_doc = json.loads((domain_dir / "expected_context.json").read_text(encoding="utf-8"))
+    evaluation = json.loads((domain_dir / "evaluation.json").read_text(encoding="utf-8"))
+    categories = tuple(evaluation["categories"])
 
-    document = yaml.safe_load(gold_path.read_text(encoding="utf-8"))
-    runtime = SemanticRuntime(load_pack(domain))
+    runtime = SemanticRuntime(load(domain_dir / "model.yaml"))
 
     questions: list[QuestionScore] = []
-    for entry in document["questions"]:
-        context = runtime.resolve_context(entry["question"])
+    for entry in questions_doc["questions"]:
+        question_id = entry["id"]
+        context = runtime.resolve_context(entry["text"])
         predicted = {
             "entities": {e.id for e in context.entities},
             "relations": {r.id for r in context.relations},
             "metrics": {m.id for m in context.metrics},
             "evidences": {e.id for e in context.evidences},
         }
-        expected = {
-            category: set(entry.get(category, [])) for category in CATEGORIES
-        }
-        questions.append(
-            QuestionScore(
-                question=entry["question"],
-                scores={
-                    category: _f1(predicted[category], expected[category])
-                    for category in CATEGORIES
-                },
-            )
-        )
-    return BenchmarkResult(questions=questions)
+        expected = {category: set(expected_doc[question_id].get(category, [])) for category in categories}
+        scores = {category: _f1(predicted[category], expected[category]) for category in categories}
+        scores["f1"] = scores["entities"] + scores["relations"] + scores["metrics"] + scores["evidences"]
+        scores["f1"] /= 4
+        questions.append(QuestionScore(question_id=question_id, type=entry["type"], scores=scores))
+
+    return BenchmarkResult(questions=questions), evaluation
 
 
 def _f1(predicted: set[str], expected: set[str]) -> float:
@@ -89,18 +97,28 @@ def _f1(predicted: set[str], expected: set[str]) -> float:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Semantic Runtime Level 2 benchmark")
+    parser = argparse.ArgumentParser(description="Semantic Runtime Phase 6 benchmark")
     parser.add_argument("--domain", default="ecommerce")
     args = parser.parse_args(argv)
 
-    result = run_domain(args.domain)
-    print(f"Level 2 benchmark: {args.domain}")
+    result, evaluation = run_domain(args.domain)
+    print(f"Phase 6 benchmark: {args.domain}")
     for question in result.questions:
-        print(question)
-    print("averages:")
-    for category in CATEGORIES:
-        print(f"  {category}: {result.average(category):.3f}")
-    return 0
+        print(f"  [{question.type}] {question.question_id}: f1={question.f1:.3f}")
+
+    print("by type:")
+    passed = True
+    for question_type in QUESTION_TYPES:
+        average = result.average_by_type(question_type)
+        threshold = evaluation["thresholds"].get(question_type, 0.0)
+        status = "PASS" if average >= threshold else "FAIL"
+        if status == "FAIL":
+            passed = False
+        print(f"  {question_type}: {average:.3f} (threshold {threshold}) {status}")
+
+    overall = result.overall()
+    print(f"overall f1: {overall:.3f}")
+    return 0 if passed else 1
 
 
 if __name__ == "__main__":

@@ -1,0 +1,44 @@
+{
+  "q-semantic-1": {
+    "entities": [],
+    "relations": [],
+    "metrics": ["revenue"],
+    "evidences": []
+  },
+  "q-semantic-2": {
+    "entities": [],
+    "relations": [],
+    "metrics": ["average_order_value"],
+    "evidences": []
+  },
+  "q-relation-1": {
+    "entities": ["customer", "payment"],
+    "relations": ["customer:places:order", "order:processes:payment"],
+    "metrics": [],
+    "evidences": []
+  },
+  "q-relation-2": {
+    "entities": ["product", "warehouse"],
+    "relations": ["product:stored_in:warehouse"],
+    "metrics": [],
+    "evidences": []
+  },
+  "q-relation-3": {
+    "entities": ["payment", "order"],
+    "relations": ["order:processes:payment"],
+    "metrics": [],
+    "evidences": []
+  },
+  "q-business-1": {
+    "entities": [],
+    "relations": [],
+    "metrics": ["revenue"],
+    "evidences": ["ev-revenue-q2"]
+  },
+  "q-business-2": {
+    "entities": [],
+    "relations": [],
+    "metrics": [],
+    "evidences": ["ev-revenue-q2"]
+  }
+}

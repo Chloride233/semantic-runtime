@@ -1,0 +1,10 @@
+{
+  "name": "ecommerce",
+  "metrics": ["precision", "recall", "f1"],
+  "categories": ["entities", "relations", "metrics", "evidences"],
+  "thresholds": {
+    "semantic_understanding": 0.5,
+    "relationship_reasoning": 0.5,
+    "business_analysis": 0.5
+  }
+}

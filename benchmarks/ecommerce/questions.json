@@ -1,0 +1,39 @@
+{
+  "questions": [
+    {
+      "id": "q-semantic-1",
+      "type": "semantic_understanding",
+      "text": "What is revenue?"
+    },
+    {
+      "id": "q-semantic-2",
+      "type": "semantic_understanding",
+      "text": "How is average order value defined?"
+    },
+    {
+      "id": "q-relation-1",
+      "type": "relationship_reasoning",
+      "text": "How are customers connected to payments?"
+    },
+    {
+      "id": "q-relation-2",
+      "type": "relationship_reasoning",
+      "text": "Which products are stored in which warehouse?"
+    },
+    {
+      "id": "q-relation-3",
+      "type": "relationship_reasoning",
+      "text": "Which payments settle an order?"
+    },
+    {
+      "id": "q-business-1",
+      "type": "business_analysis",
+      "text": "Why did revenue decrease last month?"
+    },
+    {
+      "id": "q-business-2",
+      "type": "business_analysis",
+      "text": "Show evidence for the Q2 revenue drop"
+    }
+  ]
+}

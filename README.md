@@ -93,11 +93,14 @@ print(context.matched_terms)  # ["revenue"]
 
 ## Benchmarks
 
-Two evaluation harnesses ship in `benchmarks/` (from the
-[Validation and Adoption Plan](docs/Semantic%20Runtime%20Validation%20and%20Adoption%20Plan.md)):
+Evaluation harnesses ship in `benchmarks/` (Phase 6 of the
+[Post v0.1 Roadmap](docs/Semantic%20Runtime%20Post%20v0.1%20Roadmap.md)).
+Each domain directory contains `model.yaml`, `questions.json`,
+`expected_context.json`, and `evaluation.json`; questions are tagged
+`semantic_understanding`, `relationship_reasoning`, or `business_analysis`:
 
 ```sh
-python benchmarks/run_benchmark.py      # Level 2: P/R/F1 vs gold sets (ecommerce)
+python benchmarks/run_benchmark.py      # P/R/F1 per question and type, PASS/FAIL vs thresholds
 python benchmarks/run_safety_eval.py    # Level 4: detection / false positive rate
 ```
 

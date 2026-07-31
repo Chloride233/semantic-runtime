@@ -88,6 +88,21 @@ class ContextResolver:
         return {t for t in _TOKEN_RE.findall(question.lower()) if t not in _STOPWORDS}
 
     @staticmethod
+    def _variants(term: str) -> list[str]:
+        forms = [term]
+        if len(term) > 3 and term.endswith("ies"):
+            forms.append(term[:-3] + "y")
+        elif len(term) > 2 and term.endswith("es"):
+            forms.append(term[:-2])
+        elif len(term) > 1 and term.endswith("s"):
+            forms.append(term[:-1])
+        return forms
+
+    @staticmethod
     def _score(*fields: str | None, terms: set[str]) -> list[str]:
         haystack = " ".join(f for f in fields if f).lower()
-        return [term for term in terms if re.search(rf"\b{re.escape(term)}\b", haystack)]
+        return [
+            term
+            for term in terms
+            if any(re.search(rf"\b{re.escape(variant)}\b", haystack) for variant in ContextResolver._variants(term))
+        ]

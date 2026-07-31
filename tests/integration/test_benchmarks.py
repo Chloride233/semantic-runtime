@@ -25,9 +25,9 @@ def run_script(name: str) -> subprocess.CompletedProcess:
 def test_benchmark_script_runs():
     result = run_script("run_benchmark.py")
     assert result.returncode == 0, result.stderr
-    assert "Level 2 benchmark: ecommerce" in result.stdout
-    assert "averages:" in result.stdout
-    assert "entities:" in result.stdout
+    assert "Phase 6 benchmark: ecommerce" in result.stdout
+    assert "by type:" in result.stdout
+    assert "overall f1:" in result.stdout
 
 
 def test_safety_eval_script_runs():

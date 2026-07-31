@@ -10,13 +10,14 @@ from semantic_runtime.models import Entity, Evidence, Metric, Relation
 
 CUSTOMER = Entity(id="customer", type="business_object", description="A customer who places orders")
 ORDER = Entity(id="order", type="business_object", description="A placed order")
+CATEGORY = Entity(id="category", type="business_object", description="A product category")
 REVENUE = Metric(id="revenue", definition="completed payment minus refunds", entity="order")
 EVIDENCE = Evidence(id="ev-1", statement="Revenue dropped 12% in Q2", source="sql:revenue_report")
 PLACES = Relation(source="customer", target="order", type="places")
 
 
 def build_resolver():
-    registry = Registry([CUSTOMER, ORDER, REVENUE, EVIDENCE, PLACES])
+    registry = Registry([CUSTOMER, ORDER, CATEGORY, REVENUE, EVIDENCE, PLACES])
     return ContextResolver(registry, GraphEngine(registry))
 
 
@@ -47,6 +48,18 @@ def test_resolve_no_match_returns_empty_context():
 def test_resolve_stopwords_ignored():
     context = build_resolver().resolve("why is the revenue")
     assert context.matched_terms == ["revenue"]
+
+
+def test_resolve_plural_terms_match_singular_fields():
+    context = build_resolver().resolve("How are customers connected to payments?")
+    assert {e.id for e in context.entities} == {"customer"}
+    assert {m.id for m in context.metrics} == {"revenue"}
+    assert {r.id for r in context.relations} == {"customer:places:order"}
+
+
+def test_resolve_ies_plural_maps_to_y():
+    context = build_resolver().resolve("Which categories exist?")
+    assert {e.id for e in context.entities} == {"category"}
 
 
 def test_resolve_without_model_raises():
