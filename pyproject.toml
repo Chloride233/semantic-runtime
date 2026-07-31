@@ -6,7 +6,18 @@ build-backend = "hatchling.build"
 name = "semantic-runtime"
 version = "0.1.0"
 description = "Semantic infrastructure layer for AI Agents"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
+keywords = ["semantic", "mcp", "ai-agent", "infrastructure"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -25,3 +36,5 @@ pythonpath = ["src"]
 target-version = "py312"
 line-length = 100
 
+[tool.ruff.lint.isort]
+known-first-party = ["semantic_runtime"]

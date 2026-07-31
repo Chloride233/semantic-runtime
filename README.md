@@ -6,40 +6,58 @@ context resolution, evidence, and safe execution between models and tools.
 > Models provide intelligence. Tools provide capability. Semantic Runtime
 > provides understanding.
 
+## Status
+
+- **Shipped:** repository architecture and package foundation (Step 1 of the
+  [Core Implementation Plan](docs/Semantic%20Runtime%20Core%20Implementation%20Plan.md)).
+- **Planned:** data models, model loader, registry, graph engine, context
+  resolver, MCP server, and the e-commerce demo (Steps 2-7).
+
 ## Design Documents
 
-The specification set in this repository is the source of truth (v0.1, draft):
+Specifications live in [`docs/`](docs/); the Obsidian index is
+[`Semantic Runtime.md`](Semantic%20Runtime.md).
 
-- [PRD](Semantic%20Runtime%20PRD.md) — positioning, problem, vision, scope
-- [Protocol Specification](Semantic%20Runtime%20Protocol%20Specification.md) — MCP tools, core objects, protocol principles
-- [Reference Architecture](Semantic%20Runtime%20Reference%20Architecture.md) — core modules and integrations
-- [Data Model Specification](Semantic%20Runtime%20Data%20Model%20Specification.md) — Entity / Relation / Metric / Evidence / Policy
-- [API & MCP Specification](Semantic%20Runtime%20API%20%26%20MCP%20Specification.md) — Python SDK, MCP tools, error model
-- [Implementation Blueprint](Semantic%20Runtime%20Implementation%20Blueprint.md) — repository layout, milestones
-- [Core Implementation Plan](Semantic%20Runtime%20Core%20Implementation%20Plan.md) — 7-step build order
-- [MVP Demo Design](Semantic%20Runtime%20MVP%20Demo%20Design.md) — e-commerce revenue demo
+- [PRD](docs/Semantic%20Runtime%20PRD.md) — positioning, problem, vision, scope
+- [Protocol Specification](docs/Semantic%20Runtime%20Protocol%20Specification.md) — MCP tools, core objects, protocol principles
+- [Reference Architecture](docs/Semantic%20Runtime%20Reference%20Architecture.md) — core modules and integrations
+- [Data Model Specification](docs/Semantic%20Runtime%20Data%20Model%20Specification.md) — Entity / Relation / Metric / Evidence / Policy
+- [API & MCP Specification](docs/Semantic%20Runtime%20API%20%26%20MCP%20Specification.md) — Python SDK, MCP tools, error model
+- [Implementation Blueprint](docs/Semantic%20Runtime%20Implementation%20Blueprint.md) — repository layout, milestones
+- [MVP Demo Design](docs/Semantic%20Runtime%20MVP%20Demo%20Design.md) — e-commerce revenue demo
+- [Open Source Strategy](docs/Semantic%20Runtime%20Open%20Source%20Strategy.md) — adoption and ecosystem
+- [Future Roadmap](docs/Semantic%20Runtime%20Future%20Roadmap.md) — Phase 1-5 roadmap
+
+Superseded v0.1 drafts are archived in [`docs/archive/`](docs/archive/).
 
 ## Repository Layout
 
 ```
-src/semantic_runtime/
-  core/       runtime core
-  models/     Entity, Relation, Metric, Evidence, Policy
-  loaders/    semantic model loading
-  context/    context resolver
-  safety/     policy engine and execution guardrails
-  evidence/   evidence system
-  mcp/        MCP server and tools
-tests/        unit and integration tests
+docs/                  design specifications (source of truth)
+src/semantic_runtime/  core runtime packages
+  core/  models/  loaders/  context/  safety/  evidence/  mcp/
+tests/unit/            unit tests
+tests/integration/     integration tests (planned with MCP server)
+examples/              demo semantic models (planned, Step 3)
+scripts/               development tooling (planned)
 ```
 
 ## Development
 
 ```sh
-uv sync --extra dev
-uv run pytest
+python -m pip install -e '.[dev]'
+python -m pytest -q
+python -m ruff check src tests
 ```
 
-Current status: repository initialized, package skeleton only. Step 2
-(data models) is the next milestone.
+The repository is uv-managed for reproducible environments:
+
+```sh
+uv sync --extra dev
+uv run pytest -q
+```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
 
