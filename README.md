@@ -12,10 +12,11 @@ context resolution, evidence, and safe execution between models and tools.
 
 ## Status
 
-- **Shipped:** repository architecture and package foundation (Step 1 of the
+- **Shipped:** repository architecture, package foundation, and core data
+  models — Entity / Relation / Metric / Evidence / Policy (Steps 1-2 of the
   [Core Implementation Plan](docs/Semantic%20Runtime%20Core%20Implementation%20Plan.md)).
-- **Planned:** data models, model loader, registry, graph engine, context
-  resolver, MCP server, and the e-commerce demo (Steps 2-7).
+- **Planned:** model loader, registry, graph engine, context resolver, MCP
+  server, and the e-commerce demo (Steps 3-7).
 
 ## Design Documents
 
