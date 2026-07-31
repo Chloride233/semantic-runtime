@@ -1,0 +1,7 @@
+{
+  "q-metric-dep-1": {
+    "query": ["average_order_value"],
+    "direct": ["revenue"],
+    "transitive": ["revenue"]
+  }
+}

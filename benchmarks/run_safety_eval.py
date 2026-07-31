@@ -15,10 +15,16 @@ from __future__ import annotations
 import argparse
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 
-from semantic_runtime.core import SemanticRuntime
-from semantic_runtime.loaders import loads
-from semantic_runtime.packs import load_pack
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_SRC = str(_REPO_ROOT / "src")
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
+
+from semantic_runtime.core import SemanticRuntime  # noqa: E402
+from semantic_runtime.loaders import loads  # noqa: E402
+from semantic_runtime.packs import load_pack  # noqa: E402
 
 SCENARIOS = [
     ("wrong-join-target", "wrong joins", """relations:

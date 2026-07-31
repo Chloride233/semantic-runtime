@@ -1,10 +1,12 @@
 {
   "name": "ecommerce",
-  "metrics": ["precision", "recall", "f1"],
   "categories": ["entities", "relations", "metrics", "evidences"],
   "thresholds": {
     "semantic_understanding": 0.5,
+    "entity_discovery": 0.5,
     "relationship_reasoning": 0.5,
-    "business_analysis": 0.5
+    "metric_dependency": 0.7,
+    "evidence_grounding": 0.5,
+    "safety_validation": 1.0
   }
 }

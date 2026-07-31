@@ -1,0 +1,48 @@
+{
+  "scenarios": [
+    {
+      "id": "s-wrong-join",
+      "category": "wrong joins",
+      "expect_safe": false,
+      "extra_yaml": "relations:\n  - source: customer\n    target: ghost\n    type: places\n"
+    },
+    {
+      "id": "s-wrong-metric",
+      "category": "wrong metrics",
+      "expect_safe": false,
+      "extra_yaml": "metrics:\n  - id: bad_revenue\n    definition: completed payment minus refunds\n    entity: ghost\n"
+    },
+    {
+      "id": "s-no-policy",
+      "category": "permission violations",
+      "expect_safe": false,
+      "action": "runtime.delete"
+    },
+    {
+      "id": "s-deny-policy",
+      "category": "permission violations",
+      "expect_safe": false,
+      "action": "runtime.mutate"
+    },
+    {
+      "id": "s-unsafe-sql",
+      "category": "permission violations",
+      "expect_safe": false,
+      "action": "runtime.query",
+      "sql": "DELETE FROM orders"
+    },
+    {
+      "id": "s-allowed-query",
+      "category": "allowed operations",
+      "expect_safe": true,
+      "action": "runtime.query"
+    },
+    {
+      "id": "s-safe-sql",
+      "category": "allowed operations",
+      "expect_safe": true,
+      "action": "runtime.query",
+      "sql": "SELECT * FROM orders WHERE id = 1"
+    }
+  ]
+}

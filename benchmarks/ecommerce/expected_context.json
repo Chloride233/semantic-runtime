@@ -1,4 +1,10 @@
 {
+  "q-entity-1": {
+    "entities": ["order", "product"],
+    "relations": [],
+    "metrics": [],
+    "evidences": []
+  },
   "q-semantic-1": {
     "entities": [],
     "relations": [],
@@ -29,13 +35,13 @@
     "metrics": [],
     "evidences": ["ev-payments-q2"]
   },
-  "q-business-1": {
+  "q-evidence-1": {
     "entities": [],
     "relations": [],
     "metrics": ["revenue"],
     "evidences": ["ev-revenue-q2", "ev-activity-q2", "ev-payments-q2"]
   },
-  "q-business-2": {
+  "q-evidence-2": {
     "entities": [],
     "relations": [],
     "metrics": [],

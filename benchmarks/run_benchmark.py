@@ -23,12 +23,17 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from semantic_runtime.core import SemanticRuntime
-from semantic_runtime.loaders import load
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+_SRC = str(_REPO_ROOT / "src")
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
+
+from semantic_runtime.core import SemanticRuntime  # noqa: E402
+from semantic_runtime.loaders import load  # noqa: E402
 
 BENCHMARKS = Path(__file__).resolve().parent
 
-QUESTION_TYPES = ("semantic_understanding", "relationship_reasoning", "business_analysis")
+QUESTION_TYPES = ("semantic_understanding", "entity_discovery", "relationship_reasoning", "evidence_grounding")
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,6 +71,8 @@ def run_domain(domain: str) -> tuple[BenchmarkResult, dict]:
 
     questions: list[QuestionScore] = []
     for entry in questions_doc["questions"]:
+        if entry["type"] not in QUESTION_TYPES:
+            continue
         question_id = entry["id"]
         context = runtime.resolve_context(entry["text"])
         predicted = {

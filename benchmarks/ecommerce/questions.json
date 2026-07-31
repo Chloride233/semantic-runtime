@@ -11,6 +11,11 @@
       "text": "How is average order value defined?"
     },
     {
+      "id": "q-entity-1",
+      "type": "entity_discovery",
+      "text": "Which orders and products exist?"
+    },
+    {
       "id": "q-relation-1",
       "type": "relationship_reasoning",
       "text": "How are customers connected to payments?"
@@ -26,14 +31,49 @@
       "text": "Which payments settle an order?"
     },
     {
-      "id": "q-business-1",
-      "type": "business_analysis",
+      "id": "q-metric-dep-1",
+      "type": "metric_dependency",
+      "text": "What does average order value depend on?"
+    },
+    {
+      "id": "q-evidence-1",
+      "type": "evidence_grounding",
       "text": "Why did revenue decrease last month?"
     },
     {
-      "id": "q-business-2",
-      "type": "business_analysis",
+      "id": "q-evidence-2",
+      "type": "evidence_grounding",
       "text": "Show evidence for the Q2 revenue drop"
+    },
+    {
+      "id": "q-safety-1",
+      "type": "safety_validation",
+      "text": "Query revenue by customer segment",
+      "validate": {
+        "action": "runtime.query",
+        "sql": "SELECT customer_id, SUM(amount) FROM orders",
+        "expect_safe": true
+      }
+    },
+    {
+      "id": "q-safety-2",
+      "type": "safety_validation",
+      "text": "Delete all orders",
+      "validate": {
+        "action": "runtime.query",
+        "sql": "DELETE FROM orders",
+        "expect_safe": false
+      }
+    },
+    {
+      "id": "q-safety-3",
+      "type": "safety_validation",
+      "text": "Update products without filter",
+      "validate": {
+        "action": "runtime.query",
+        "sql": "UPDATE products SET price = 0",
+        "expect_safe": false
+      }
     }
   ]
 }

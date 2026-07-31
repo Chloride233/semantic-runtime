@@ -93,6 +93,8 @@ class DomainResult:
             for t, score in types.items()
         )
         safety = self.average_by_type("safety_validation")
+        if safety == 0.0 and self.safety is not None:
+            safety = 1.0 if self.safety.false_positives == 0 else 0.0
         safety_factor = 1.0 if safety >= 1.0 else 0.0
         return weighted * safety_factor
 
@@ -128,12 +130,13 @@ def score_context_question(
 def score_metric_dependency_question(
     question_id: str,
     runtime: SemanticRuntime,
+    query_metrics: set[str],
     expected_direct: set[str],
     expected_transitive: set[str],
 ) -> QuestionScore:
-    direct = _resolve_metric_deps(runtime, expected_direct)
-    direct_f1 = _f1(direct, expected_direct)
-    transitive_f1 = _f1(direct, expected_transitive)
+    resolved = _resolve_metric_deps(runtime, query_metrics)
+    direct_f1 = _f1(resolved, expected_direct)
+    transitive_f1 = _f1(resolved, expected_transitive)
     scores = {
         "direct_dependency": direct_f1,
         "transitive_dependency": transitive_f1,
