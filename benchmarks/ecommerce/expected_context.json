@@ -27,18 +27,18 @@
     "entities": ["payment", "order"],
     "relations": ["order:processes:payment"],
     "metrics": [],
-    "evidences": []
+    "evidences": ["ev-payments-q2"]
   },
   "q-business-1": {
     "entities": [],
     "relations": [],
     "metrics": ["revenue"],
-    "evidences": ["ev-revenue-q2"]
+    "evidences": ["ev-revenue-q2", "ev-activity-q2", "ev-payments-q2"]
   },
   "q-business-2": {
     "entities": [],
     "relations": [],
     "metrics": [],
-    "evidences": ["ev-revenue-q2"]
+    "evidences": ["ev-revenue-q2", "ev-activity-q2", "ev-payments-q2"]
   }
 }

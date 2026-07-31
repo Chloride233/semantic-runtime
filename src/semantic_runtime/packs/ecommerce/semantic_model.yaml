@@ -55,6 +55,16 @@ evidences:
     source: sql:revenue_report
     status: verified
     collected_at: 2026-07-31T00:00:00Z
+  - id: ev-activity-q2
+    statement: Returning customer activity decreased 18% in Q2 2026
+    source: sql:customer_activity
+    status: verified
+    collected_at: 2026-07-31T00:00:00Z
+  - id: ev-payments-q2
+    statement: Payment failure rate rose to 7% in Q2 2026
+    source: sql:payment_failures
+    status: verified
+    collected_at: 2026-07-31T00:00:00Z
 policies:
   - id: p-allow-read
     action: runtime.query

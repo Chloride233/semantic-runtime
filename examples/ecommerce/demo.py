@@ -46,6 +46,7 @@ def main(argv: list[str] | None = None) -> int:
     metric = context.metrics[0]
     print(f"1. Identified metric: {metric.id}")
     print(f"   definition: {metric.definition}")
+    print(f"   unit: {metric.unit or 'n/a'}, subject entity: {metric.entity}")
 
     dependencies = runtime.metric_dependencies(metric.id)
     if dependencies:
@@ -66,21 +67,42 @@ def main(argv: list[str] | None = None) -> int:
         for relation in runtime.relations_for(entity.id):
             relations_by_id[relation.id] = relation
 
-    print(f"3. Related entities ({[e.id for e in related_entities]})")
-    for entity in related_entities:
-        print(f"   {entity.id}: {entity.description}")
-    print(f"   relations ({[r.id for r in relations_by_id.values()]})")
+    affected = {e.id: e for e in related_entities}
     for relation in relations_by_id.values():
-        print(f"   {relation.source} -[{relation.type}]-> {relation.target}")
+        for endpoint in (relation.source, relation.target):
+            if endpoint not in affected:
+                affected[endpoint] = runtime.entity(endpoint)
 
-    print(f"4. Evidence ({len(context.evidences)})")
-    for evidence in context.evidences:
-        print(f"   [{evidence.status}] {evidence.statement} (source: {evidence.source})")
+    print(f"3. Affected entities ({list(affected)})")
+    for entity in affected.values():
+        print(f"   {entity.id}: {entity.description}")
+    for relation in relations_by_id.values():
+        print(f"   relation: {relation.source} -[{relation.type}]-> {relation.target}")
+
+    factors_by_id = {e.id: e for e in context.evidences}
+    evidence_terms = set(context.matched_terms)
+    evidence_terms.update(e.id for e in affected.values())
+    for evidence in runtime.evidences():
+        if evidence.id in factors_by_id:
+            continue
+        if _matches(evidence, evidence_terms):
+            factors_by_id[evidence.id] = evidence
+
+    print(f"4. Related factors ({len(factors_by_id)})")
+    for evidence in factors_by_id.values():
+        print(f"   [{evidence.status}] {evidence.statement}")
+        print(f"      source: {evidence.source}")
 
     print()
     print(f"5. Operation validation: query={runtime.validate('runtime.query').allow}, "
           f"mutate={runtime.validate('runtime.mutate').allow}")
     return 0
+
+
+def _matches(evidence, terms: set[str]) -> bool:
+    from semantic_runtime.context.resolver import ContextResolver
+
+    return bool(ContextResolver._score(evidence.statement, evidence.source, terms=terms))
 
 
 if __name__ == "__main__":

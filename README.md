@@ -169,6 +169,10 @@ python examples/ecommerce/demo.py          # prints the full pipeline
 python examples/ecommerce/demo.py --mcp    # serves the same model over MCP
 ```
 
+Output shows the metric definition, dependencies, affected entities with
+their relations, evidence-backed root cause factors, and operation
+validation for *"Why did revenue decrease last month?"*.
+
 ## Schema Connectors
 
 Map database schemas into semantic models (tables become entities, foreign
