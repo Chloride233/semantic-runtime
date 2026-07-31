@@ -37,6 +37,7 @@ Models provide intelligence. Tools provide capability. **Semantic Runtime provid
 
 ### 验证层
 - [[Semantic Runtime MVP Demo Design]] — 电商场景演示、运行时流程、证据输出
+- [[Semantic Runtime Validation and Adoption Plan]] — 真实环境验证框架、采纳策略、成功标准
 
 ## 核心概念
 
