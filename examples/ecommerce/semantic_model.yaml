@@ -1,0 +1,57 @@
+# E-commerce semantic model for the Semantic Runtime demo.
+entities:
+  - id: customer
+    type: business_object
+    name: Customer
+    description: A customer who places orders on the storefront
+  - id: order
+    type: business_object
+    name: Order
+    description: A placed order with items, payment, and refunds
+  - id: product
+    type: business_object
+    name: Product
+    description: A product sold in the catalog
+  - id: warehouse
+    type: business_object
+    name: Warehouse
+    description: A fulfillment location that stocks products
+relations:
+  - source: customer
+    target: order
+    type: places
+    description: A customer places an order
+  - source: order
+    target: product
+    type: contains
+    description: An order contains products
+  - source: product
+    target: warehouse
+    type: stored_in
+    description: A product is stocked in a warehouse
+metrics:
+  - id: revenue
+    definition: completed payment minus refunds
+    entity: order
+    unit: USD
+    description: Net revenue from completed payments after refunds
+  - id: average_order_value
+    definition: revenue divided by completed orders
+    entity: order
+    unit: USD
+    description: Average revenue per completed order
+evidences:
+  - id: ev-revenue-q2
+    statement: Revenue dropped 12% in Q2 2026
+    source: sql:revenue_report
+    status: verified
+    collected_at: 2026-07-31T00:00:00Z
+policies:
+  - id: p-allow-read
+    action: runtime.query
+    effect: allow
+    description: Allow read-only runtime queries
+  - id: p-deny-write
+    action: runtime.mutate
+    effect: deny
+    description: Deny mutations in the demo runtime

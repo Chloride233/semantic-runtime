@@ -13,11 +13,13 @@ context resolution, evidence, and safe execution between models and tools.
 ## Status
 
 - **Shipped:** repository architecture, package foundation, core data models
-  (Entity / Relation / Metric / Evidence / Policy), and the YAML model loader
-  (Steps 1-3 of the
+  (Entity / Relation / Metric / Evidence / Policy), YAML model loader,
+  registry, graph engine, deterministic context resolver, and the MCP server
+  (Steps 1-7 of the
   [Core Implementation Plan](docs/Semantic%20Runtime%20Core%20Implementation%20Plan.md)).
-- **Planned:** registry, graph engine, context resolver, MCP server, and the
-  e-commerce demo (Steps 4-7).
+- **Planned:** database connectors, semantic packs, and the e-commerce demo
+  (Milestones 2-4 of the
+  [Implementation Blueprint](docs/Semantic%20Runtime%20Implementation%20Blueprint.md)).
 
 ## Design Documents
 
@@ -43,8 +45,8 @@ docs/                  design specifications (source of truth)
 src/semantic_runtime/  core runtime packages
   core/  models/  loaders/  context/  safety/  evidence/  mcp/
 tests/unit/            unit tests
-tests/integration/     integration tests (planned with MCP server)
-examples/              demo semantic models (planned, Step 3)
+tests/integration/     integration tests (MCP server interaction)
+examples/              demo semantic models (e-commerce model included)
 scripts/               development tooling (planned)
 ```
 
@@ -61,6 +63,26 @@ The repository is uv-managed for reproducible environments:
 ```sh
 uv sync --extra dev
 uv run pytest -q
+```
+
+## MCP Server
+
+Serve any semantic model to MCP clients over stdio:
+
+```sh
+python -m semantic_runtime.mcp examples/ecommerce/semantic_model.yaml
+```
+
+Exposes five tools: `list_entities`, `describe_entity`, `get_metric`,
+`resolve_context`, and `validate_operation`. Try it with any MCP client
+(e.g. Claude Desktop) pointed at the command above, or connect with the SDK:
+
+```python
+from semantic_runtime.core import SemanticRuntime
+
+runtime = SemanticRuntime.load("examples/ecommerce/semantic_model.yaml")
+context = runtime.resolve_context("Why did revenue drop?")
+print(context.matched_terms)  # ["revenue"]
 ```
 
 ## Contributing

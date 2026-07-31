@@ -69,8 +69,12 @@ Common errors:
 -   MODEL_NOT_LOADED
 -   ENTITY_NOT_FOUND
 -   RELATION_NOT_FOUND
+-   DUPLICATE_MODEL
 -   POLICY_DENIED
 -   UNSAFE_OPERATION
+
+All runtime errors carry a stable `code` (as above) and a human-readable
+message; codes are exposed as-is over MCP tool errors.
 
 ## Boundary
 
