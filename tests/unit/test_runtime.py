@@ -143,6 +143,38 @@ metrics:
     assert {v.code for v in report.violations} == {"RELATION_TARGET_MISSING", "METRIC_ENTITY_MISSING"}
 
 
+def test_custom_safety_provider_denies_operation():
+    from semantic_runtime.safety import SafetyReport, SafetyViolation
+
+    class DenyAllProvider:
+        def check_operation(self, action, sql):
+            return SafetyReport([SafetyViolation("CUSTOM_DENY", "denied by custom provider")])
+
+    runtime = SemanticRuntime.from_yaml(MODEL_YAML, safety_provider=DenyAllProvider())
+    decision = runtime.validate("execute.query")
+    assert decision.allow is False
+    assert "CUSTOM_DENY" in decision.reason
+
+
+def test_custom_safety_provider_allows_operation():
+    from semantic_runtime.safety import SafetyReport
+
+    class AllowAllProvider:
+        def check_operation(self, action, sql):
+            return SafetyReport()
+
+    runtime = SemanticRuntime.from_yaml(MODEL_YAML, safety_provider=AllowAllProvider())
+    decision = runtime.validate("execute.query", sql="DELETE FROM orders")
+    assert decision.allow is True
+    assert decision.policy_id == "p-query"
+
+
+def test_provider_protocol_is_runtime_checkable():
+    from semantic_runtime.safety import GuardrailSafetyProvider, SafetyProvider
+
+    assert isinstance(GuardrailSafetyProvider(), SafetyProvider)
+
+
 def test_metric_dependencies_transitive():
     runtime = SemanticRuntime.from_yaml(
         """

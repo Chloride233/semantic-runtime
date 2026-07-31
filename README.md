@@ -149,6 +149,20 @@ runtime.validate("execute.query", sql="DELETE FROM orders")  # allow=False, UNSA
 runtime.validate_model()                                 # integrity: relations/metrics resolve
 ```
 
+Operation safety runs through a `SafetyProvider` — inject your own to plug
+in external engines (JoinLint adapters implement `check_operation`):
+
+```python
+from semantic_runtime.core import SemanticRuntime
+from semantic_runtime.safety import SafetyReport
+
+class MyProvider:
+    def check_operation(self, action, sql):
+        return SafetyReport()  # safe
+
+runtime = SemanticRuntime.load("model.yaml", safety_provider=MyProvider())
+```
+
 ## Semantic Packs
 
 Built-in domain semantic models ship with the package:

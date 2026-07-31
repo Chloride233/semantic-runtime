@@ -26,13 +26,14 @@ agent frameworks, databases, or MCP.
 
 ## Current contract
 
-- Core Phases 1-4 are shipped: data models (Entity / Relation / Metric /
+- Core Phases 1-5 are shipped: data models (Entity / Relation / Metric /
   Evidence / Policy), YAML model loader, registry, graph engine, deterministic
   context resolver, metric dependency resolution, policy-based operation
   validation, SQL guardrails, model integrity validation, MCP server
-  (`python -m semantic_runtime.mcp <model.yaml>`), schema connectors (SQLite
-  built-in; PostgreSQL/MySQL/Snowflake via optional extras), and the
-  e-commerce semantic pack (`semantic_runtime.packs`).
+  (`python -m semantic_runtime.mcp <model.yaml>`, stdio and streamable HTTP),
+  schema connectors (SQLite built-in; PostgreSQL/MySQL/Snowflake via optional
+  extras), the e-commerce semantic pack (`semantic_runtime.packs`), the
+  SafetyProvider extension point, benchmarks, and docker compose quick start.
 - Not yet shipped: JoinLint adapter, plugin system, community packs,
   Snowflake-verified integration, and scripts tooling; do not claim them.
 - New runtime behavior must come from the design documents in `docs/`;

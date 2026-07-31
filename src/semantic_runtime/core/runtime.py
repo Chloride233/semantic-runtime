@@ -13,7 +13,12 @@ from semantic_runtime.core.registry import Registry
 from semantic_runtime.loaders import load, loads
 from semantic_runtime.loaders.yaml_loader import SemanticModel
 from semantic_runtime.models import Entity, Evidence, Metric, Policy, Relation
-from semantic_runtime.safety import SafetyReport, check_sql, validate_model
+from semantic_runtime.safety import (
+    GuardrailSafetyProvider,
+    SafetyProvider,
+    SafetyReport,
+    validate_model,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -29,21 +34,26 @@ class PolicyDecision:
 class SemanticRuntime:
     """Facade over registry, graph engine, and context resolver."""
 
-    def __init__(self, models: Iterable[SemanticModel] | None = None) -> None:
+    def __init__(
+        self,
+        models: Iterable[SemanticModel] | None = None,
+        safety_provider: SafetyProvider | None = None,
+    ) -> None:
         self._models = list(models or [])
         self._registry = Registry(self._models)
         self._graph = GraphEngine(self._registry)
         self._resolver = ContextResolver(self._registry, self._graph)
+        self._safety_provider: SafetyProvider = safety_provider or GuardrailSafetyProvider()
 
     @classmethod
-    def load(cls, path: str | Path) -> SemanticRuntime:
+    def load(cls, path: str | Path, safety_provider: SafetyProvider | None = None) -> SemanticRuntime:
         """Load a semantic model from a YAML file."""
-        return cls(load(path))
+        return cls(load(path), safety_provider=safety_provider)
 
     @classmethod
-    def from_yaml(cls, text: str) -> SemanticRuntime:
+    def from_yaml(cls, text: str, safety_provider: SafetyProvider | None = None) -> SemanticRuntime:
         """Build a runtime from YAML text."""
-        return cls(loads(text))
+        return cls(loads(text), safety_provider=safety_provider)
 
     def entity(self, entity_id: str) -> Entity:
         return self._registry.entity(entity_id)
@@ -103,18 +113,18 @@ class SemanticRuntime:
     def validate(self, action: str, sql: str | None = None) -> PolicyDecision:
         """Check whether an operation is allowed; default deny.
 
-        Policies govern the action; when SQL is supplied, SQL guardrails run
-        first and any violation denies the operation (UNSAFE_OPERATION).
+        The safety provider inspects the operation first (SQL guardrails,
+        join safety, etc.); any violation denies the operation. Policies
+        then govern the action.
         """
         if len(self._registry) == 0:
             raise ModelNotLoadedError("no semantic model is loaded")
 
-        if sql is not None:
-            sql_report = check_sql(sql)
-            if not sql_report.ok:
-                codes = ", ".join(v.code for v in sql_report.violations)
-                messages = "; ".join(v.message for v in sql_report.violations)
-                return PolicyDecision(False, action, None, f"unsafe SQL ({codes}): {messages}")
+        report = self._safety_provider.check_operation(action, sql)
+        if not report.ok:
+            codes = ", ".join(v.code for v in report.violations)
+            messages = "; ".join(v.message for v in report.violations)
+            return PolicyDecision(False, action, None, f"operation rejected ({codes}): {messages}")
 
         matching = [p for p in self._registry.policies() if p.action == action]
         if not matching:
