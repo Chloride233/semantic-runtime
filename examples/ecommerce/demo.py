@@ -1,6 +1,6 @@
 """MVP demo: why did revenue decrease last month?
 
-Shows the full Semantic Runtime pipeline: semantic model loading, context
+Shows the full Semantic Runtime pipeline: semantic pack loading, context
 resolution, metric dependency discovery, relationship resolution, and
 evidence output. Optionally serves the model over MCP (--mcp).
 
@@ -13,11 +13,10 @@ from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
 
 from semantic_runtime.core import SemanticRuntime
+from semantic_runtime.packs import load_pack
 
-MODEL = Path(__file__).with_name("semantic_model.yaml")
 QUESTION = "Why did revenue decrease last month?"
 
 
@@ -26,7 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mcp", action="store_true", help="serve the model over MCP (stdio) instead of printing")
     args = parser.parse_args(argv)
 
-    runtime = SemanticRuntime.load(MODEL)
+    runtime = SemanticRuntime(load_pack("ecommerce"))
 
     if args.mcp:
         from semantic_runtime.mcp import create_server

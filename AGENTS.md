@@ -26,9 +26,16 @@ agent frameworks, databases, or MCP.
 
 ## Current contract
 
-- v0.1 is a package foundation: blueprint module packages exist, no runtime
-  behavior is implemented yet.
-- Data models, loaders, registry, graph engine, context resolver, MCP server,
-  examples, and scripts are planned milestones from the Core Implementation
-  Plan; do not claim them as shipped.
+- Core Phases 1-4 are shipped: data models (Entity / Relation / Metric /
+  Evidence / Policy), YAML model loader, registry, graph engine, deterministic
+  context resolver, metric dependency resolution, policy-based operation
+  validation, SQL guardrails, model integrity validation, MCP server
+  (`python -m semantic_runtime.mcp <model.yaml>`), schema connectors (SQLite
+  built-in; PostgreSQL/MySQL/Snowflake via optional extras), and the
+  e-commerce semantic pack (`semantic_runtime.packs`).
+- Not yet shipped: JoinLint adapter, plugin system, community packs,
+  Snowflake-verified integration, and scripts tooling; do not claim them.
+- New runtime behavior must come from the design documents in `docs/`;
+  behavior is not invented in code. Docs are updated when implementation
+  clarifies or extends them (e.g. new error codes).
 - Keep README, rules, and docs aligned with implemented behavior.

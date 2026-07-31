@@ -10,6 +10,7 @@ from semantic_runtime.connectors.schema import (
     TableSchema,
 )
 from semantic_runtime.connectors.schema_mapper import map_schema
+from semantic_runtime.connectors.snowflake import SnowflakeConnector
 from semantic_runtime.connectors.sqlite import SQLiteConnector
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     "PostgresConnector",
     "SQLiteConnector",
     "SchemaConnector",
+    "SnowflakeConnector",
     "TableSchema",
     "map_schema",
 ]

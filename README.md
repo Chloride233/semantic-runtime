@@ -15,12 +15,12 @@ context resolution, evidence, and safe execution between models and tools.
 - **Shipped:** repository architecture, package foundation, core data models
   (Entity / Relation / Metric / Evidence / Policy), YAML model loader,
   registry, graph engine, deterministic context resolver, metric dependency
-  resolution, schema connectors (SQLite, PostgreSQL, MySQL), SQL guardrails,
-  model integrity validation, policy-based operation validation, and the MCP
-  server (Phases 1-4 of the
+  resolution, schema connectors (SQLite, PostgreSQL, MySQL, Snowflake), SQL
+  guardrails, model integrity validation, policy-based operation validation,
+  MCP server, and the e-commerce semantic pack (Phases 1-5 of the
   [Future Roadmap](docs/Semantic%20Runtime%20Future%20Roadmap.md)).
-- **Planned:** JoinLint adapter integration, Snowflake connector, semantic
-  packs, and ecosystem tooling (Phases 4-5 of the roadmap).
+- **Planned:** JoinLint adapter integration, plugin system, and community
+  packs (Phases 4-5 of the roadmap).
 
 ## Design Documents
 
@@ -71,7 +71,7 @@ uv run pytest -q
 Serve any semantic model to MCP clients over stdio:
 
 ```sh
-python -m semantic_runtime.mcp examples/ecommerce/semantic_model.yaml
+python -m semantic_runtime.mcp "$(python -c 'from semantic_runtime.packs import pack_path; print(pack_path("ecommerce"))')"
 ```
 
 Exposes five tools: `list_entities`, `describe_entity`, `get_metric`,
@@ -80,8 +80,9 @@ Exposes five tools: `list_entities`, `describe_entity`, `get_metric`,
 
 ```python
 from semantic_runtime.core import SemanticRuntime
+from semantic_runtime.packs import load_pack
 
-runtime = SemanticRuntime.load("examples/ecommerce/semantic_model.yaml")
+runtime = SemanticRuntime(load_pack("ecommerce"))
 context = runtime.resolve_context("Why did revenue drop?")
 print(context.matched_terms)  # ["revenue"]
 ```
@@ -98,6 +99,19 @@ runtime.validate("execute.query")                       # allow=True (policy)
 runtime.validate("execute.query", sql="DELETE FROM orders")  # allow=False, UNSAFE_DELETE_NO_WHERE
 runtime.validate_model()                                 # integrity: relations/metrics resolve
 ```
+
+## Semantic Packs
+
+Built-in domain semantic models ship with the package:
+
+```python
+from semantic_runtime.core import SemanticRuntime
+from semantic_runtime.packs import load_pack
+
+runtime = SemanticRuntime(load_pack("ecommerce"))  # ecommerce is available
+```
+
+Load a local pack directory with `load_pack("name", base_dir=path)`.
 
 ## Demo
 

@@ -4,6 +4,7 @@ import pytest
 
 from semantic_runtime.connectors.mysql import MySQLConnector
 from semantic_runtime.connectors.postgres import PostgresConnector
+from semantic_runtime.connectors.snowflake import SnowflakeConnector
 
 
 def test_mysql_dsn_parsing():
@@ -37,4 +38,10 @@ def test_postgres_requires_driver():
 def test_mysql_requires_driver():
     connector = MySQLConnector("mysql://root@localhost/shop")
     with pytest.raises(ImportError, match="mysql"):
+        connector.load_schema()
+
+
+def test_snowflake_requires_driver():
+    connector = SnowflakeConnector(account="acct", user="u", password="p", database="db")
+    with pytest.raises(ImportError, match="snowflake"):
         connector.load_schema()

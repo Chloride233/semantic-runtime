@@ -10,7 +10,9 @@ from pathlib import Path
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-MODEL_PATH = Path(__file__).resolve().parents[2] / "examples" / "ecommerce" / "semantic_model.yaml"
+from semantic_runtime.packs import pack_path
+
+MODEL_PATH = pack_path("ecommerce")
 SRC_PATH = Path(__file__).resolve().parents[2] / "src"
 
 
