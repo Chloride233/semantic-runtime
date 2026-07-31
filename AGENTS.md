@@ -33,8 +33,9 @@ agent frameworks, databases, or MCP.
   (`python -m semantic_runtime.mcp <model.yaml>`, stdio and streamable HTTP),
   schema connectors (SQLite built-in; PostgreSQL/MySQL/Snowflake via optional
   extras), built-in domain packs (`semantic_runtime.packs`: ecommerce, saas,
-  finance, game, healthcare), the SafetyProvider extension point, benchmarks,
-  and docker compose quick start.
+  finance, game, healthcare), the SafetyProvider extension point, the v0.2
+  benchmark framework (`benchmarks/runner.py`, six question types, SRB
+  score), and docker compose quick start.
 - Not yet shipped: JoinLint adapter, plugin system, third-party community
   packs, Snowflake-verified integration, and scripts tooling; do not claim
   them.

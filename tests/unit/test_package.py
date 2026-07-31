@@ -4,7 +4,7 @@ import semantic_runtime
 
 
 def test_package_importable():
-    assert semantic_runtime.__version__ == "0.1.0"
+    assert semantic_runtime.__version__ == "0.2.0"
 
 
 def test_blueprint_packages_exist():

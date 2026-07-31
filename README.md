@@ -12,15 +12,17 @@ context resolution, evidence, and safe execution between models and tools.
 
 ## Status
 
-- **Shipped:** repository architecture, package foundation, core data models
-  (Entity / Relation / Metric / Evidence / Policy), YAML model loader,
-  registry, graph engine, deterministic context resolver, metric dependency
-  resolution, schema connectors (SQLite, PostgreSQL, MySQL, Snowflake), SQL
-  guardrails, model integrity validation, policy-based operation validation,
-  MCP server, and the e-commerce semantic pack (Phases 1-5 of the
-  [Future Roadmap](docs/Semantic%20Runtime%20Future%20Roadmap.md)).
-- **Planned:** JoinLint adapter integration, plugin system, and community
-  packs (Phases 4-5 of the roadmap).
+- **Shipped:** core data models (Entity / Relation / Metric / Evidence /
+  Policy), YAML model loader, registry, graph engine, deterministic context
+  resolver, metric dependency resolution, schema connectors (SQLite,
+  PostgreSQL, MySQL, Snowflake), SQL guardrails, model integrity validation,
+  policy-based operation validation, SafetyProvider extension point, MCP
+  server (stdio + streamable HTTP), five built-in domain packs, the v0.2
+  benchmark framework (six question types, SRB score), docker compose quick
+  start, and the killer demo.
+- **Planned:** JoinLint adapter integration, plugin system, third-party
+  community packs, Snowflake-verified integration, Mode B agent evaluation,
+  and scripts tooling.
 
 ## Design Documents
 
@@ -37,6 +39,7 @@ Specifications live in [`docs/`](docs/); the Obsidian index is
 - [Open Source Strategy](docs/Semantic%20Runtime%20Open%20Source%20Strategy.md) — adoption and ecosystem
 - [Future Roadmap](docs/Semantic%20Runtime%20Future%20Roadmap.md) — Phase 1-5 roadmap
 - [Post v0.1 Roadmap](docs/Semantic%20Runtime%20Post%20v0.1%20Roadmap.md) — Phase 6-10 execution plan, v0.2-v1.0 evolution
+- [Benchmark Plan v0.2](docs/Semantic%20Runtime%20Benchmark%20Plan%20v0.2.md) — six question types, SRB scoring, Mode A/B split
 - [Validation and Adoption Plan](docs/Semantic%20Runtime%20Validation%20and%20Adoption%20Plan.md) — real-world validation framework, adoption stages
 
 Superseded v0.1 drafts are archived in [`docs/archive/`](docs/archive/).
@@ -49,8 +52,8 @@ src/semantic_runtime/  core runtime packages
   core/  models/  loaders/  context/  safety/  evidence/  mcp/  connectors/
 tests/unit/            unit tests
 tests/integration/     integration tests (MCP server, connectors, benchmarks)
-benchmarks/            Level 2 capability + Level 4 safety evaluations
-examples/              demo semantic models (e-commerce demo included)
+benchmarks/            v0.2 framework: runner, scorer, per-domain datasets
+examples/              demo semantic models and scripts
 scripts/               development tooling (planned)
 ```
 
@@ -93,16 +96,21 @@ print(context.matched_terms)  # ["revenue"]
 
 ## Benchmarks
 
-Evaluation harnesses ship in `benchmarks/` (Phase 6 of the
-[Post v0.1 Roadmap](docs/Semantic%20Runtime%20Post%20v0.1%20Roadmap.md)).
-Each domain directory contains `model.yaml`, `questions.json`,
-`expected_context.json`, and `evaluation.json`; questions are tagged
-`semantic_understanding`, `relationship_reasoning`, or `business_analysis`:
+The v0.2 framework (see the [Benchmark Plan](docs/Semantic%20Runtime%20Benchmark%20Plan%20v0.2.md))
+evaluates runtime capability with six question types — semantic
+understanding, entity discovery, relationship reasoning, metric dependency,
+evidence grounding, and safety validation — and reports a weighted **SRB
+score** with a hard safety gate:
 
 ```sh
-python benchmarks/run_benchmark.py      # P/R/F1 per question and type, PASS/FAIL vs thresholds
-python benchmarks/run_safety_eval.py    # Level 4: detection / false positive rate
+python benchmarks/runner.py --domain ecommerce                 # full run
+python benchmarks/runner.py --domain ecommerce --type metric_dependency
+python benchmarks/runner.py --domain ecommerce --safety
+python benchmarks/runner.py --domain ecommerce --output report.json
 ```
+
+Legacy entry points remain available: `benchmarks/run_benchmark.py` and
+`benchmarks/run_safety_eval.py`.
 
 ## Docker
 

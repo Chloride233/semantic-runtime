@@ -2,9 +2,9 @@
 
 ## Supported Versions
 
-Semantic Runtime is in pre-alpha (v0.1). No releases are published yet, and
-no version is officially supported. Security fixes are applied to `main` and
-land in the first stable release.
+Semantic Runtime is pre-1.0 (v0.2). The latest release on `main` receives
+security fixes; no version is officially supported until v1.0. Security
+fixes land on `main` first.
 
 ## Reporting a Vulnerability
 

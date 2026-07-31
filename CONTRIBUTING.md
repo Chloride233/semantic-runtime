@@ -1,8 +1,9 @@
 # Contributing to Semantic Runtime
 
-Thanks for your interest in Semantic Runtime. This project is in early
-pre-alpha (v0.1): the package foundation exists, but runtime behavior is not
-implemented yet. Contributions that respect the design below are welcome.
+Thanks for your interest in Semantic Runtime. The core runtime, MCP server,
+domain packs, and v0.2 benchmark framework are shipped; integration
+adapters (JoinLint) and the plugin system are not built yet. Contributions
+that respect the design below are welcome.
 
 ## Code of Conduct
 
