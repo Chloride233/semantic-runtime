@@ -97,6 +97,14 @@ async def test_mcp_validate_operation():
             denied = await session.call_tool("validate_operation", {"action": "runtime.mutate"})
             assert json.loads(denied.content[0].text)["allow"] is False
 
+            unsafe = await session.call_tool(
+                "validate_operation",
+                {"action": "runtime.query", "sql": "DELETE FROM orders"},
+            )
+            payload = json.loads(unsafe.content[0].text)
+            assert payload["allow"] is False
+            assert "UNSAFE_DELETE_NO_WHERE" in payload["reason"]
+
 
 def _collect_items(result) -> list[dict]:
     items: list[dict] = []

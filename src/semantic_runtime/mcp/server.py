@@ -92,9 +92,13 @@ def create_server(runtime: SemanticRuntime, name: str = "Semantic Runtime") -> F
         }
 
     @mcp.tool()
-    def validate_operation(action: str) -> dict:
-        """Check whether an operation is allowed by policy (default deny)."""
-        decision = runtime.validate(action)
+    def validate_operation(action: str, sql: str | None = None) -> dict:
+        """Check whether an operation is allowed by policy (default deny).
+
+        When sql is provided, SQL guardrails are applied first; any violation
+        denies the operation.
+        """
+        decision = runtime.validate(action, sql)
         return {
             "allow": decision.allow,
             "action": decision.action,

@@ -95,12 +95,52 @@ policies:
     assert runtime.validate("execute.query").allow is False
 
 
+def test_validate_with_safe_sql_allowed():
+    runtime = SemanticRuntime.from_yaml(MODEL_YAML)
+    decision = runtime.validate("execute.query", sql="SELECT * FROM orders WHERE id = 1")
+    assert decision.allow is True
+
+
 def test_empty_runtime_raises_model_not_loaded():
     runtime = SemanticRuntime()
     with pytest.raises(ModelNotLoadedError):
         runtime.resolve_context("revenue")
     with pytest.raises(ModelNotLoadedError):
         runtime.validate("execute.query")
+
+
+def test_validate_with_unsafe_sql_denied():
+    runtime = SemanticRuntime.from_yaml(MODEL_YAML)
+    decision = runtime.validate("execute.query", sql="DELETE FROM orders")
+    assert decision.allow is False
+    assert decision.policy_id is None
+    assert "UNSAFE_DELETE_NO_WHERE" in decision.reason
+
+
+def test_validate_model_ok_for_valid_model():
+    runtime = SemanticRuntime.from_yaml(MODEL_YAML)
+    assert runtime.validate_model().ok
+
+
+def test_validate_model_reports_broken_relations():
+    runtime = SemanticRuntime.from_yaml(
+        """
+entities:
+  - id: customer
+    type: business_object
+relations:
+  - source: customer
+    target: ghost
+    type: places
+metrics:
+  - id: revenue
+    definition: x
+    entity: ghost
+"""
+    )
+    report = runtime.validate_model()
+    assert not report.ok
+    assert {v.code for v in report.violations} == {"RELATION_TARGET_MISSING", "METRIC_ENTITY_MISSING"}
 
 
 def test_metric_dependencies_transitive():

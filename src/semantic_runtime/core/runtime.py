@@ -13,6 +13,7 @@ from semantic_runtime.core.registry import Registry
 from semantic_runtime.loaders import load, loads
 from semantic_runtime.loaders.yaml_loader import SemanticModel
 from semantic_runtime.models import Entity, Evidence, Metric, Policy, Relation
+from semantic_runtime.safety import SafetyReport, check_sql, validate_model
 
 
 @dataclass(frozen=True, slots=True)
@@ -99,10 +100,22 @@ class SemanticRuntime:
         visit(metric_id)
         return ordered
 
-    def validate(self, action: str) -> PolicyDecision:
-        """Check whether an operation is allowed by policy; default deny."""
+    def validate(self, action: str, sql: str | None = None) -> PolicyDecision:
+        """Check whether an operation is allowed; default deny.
+
+        Policies govern the action; when SQL is supplied, SQL guardrails run
+        first and any violation denies the operation (UNSAFE_OPERATION).
+        """
         if len(self._registry) == 0:
             raise ModelNotLoadedError("no semantic model is loaded")
+
+        if sql is not None:
+            sql_report = check_sql(sql)
+            if not sql_report.ok:
+                codes = ", ".join(v.code for v in sql_report.violations)
+                messages = "; ".join(v.message for v in sql_report.violations)
+                return PolicyDecision(False, action, None, f"unsafe SQL ({codes}): {messages}")
+
         matching = [p for p in self._registry.policies() if p.action == action]
         if not matching:
             return PolicyDecision(False, action, None, f"no policy matches action {action!r}; default deny")
@@ -111,3 +124,7 @@ class SemanticRuntime:
             return PolicyDecision(False, action, denied[0].id, f"denied by policy {denied[0].id!r}")
         allowed = matching[0]
         return PolicyDecision(True, action, allowed.id, f"allowed by policy {allowed.id!r}")
+
+    def validate_model(self) -> SafetyReport:
+        """Check model integrity: relations and metrics must resolve."""
+        return validate_model(self._models)

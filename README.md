@@ -15,11 +15,12 @@ context resolution, evidence, and safe execution between models and tools.
 - **Shipped:** repository architecture, package foundation, core data models
   (Entity / Relation / Metric / Evidence / Policy), YAML model loader,
   registry, graph engine, deterministic context resolver, metric dependency
-  resolution, the MCP server, and schema connectors with SQLite support
-  (Phases 1-3 of the
+  resolution, schema connectors (SQLite, PostgreSQL, MySQL), SQL guardrails,
+  model integrity validation, policy-based operation validation, and the MCP
+  server (Phases 1-4 of the
   [Future Roadmap](docs/Semantic%20Runtime%20Future%20Roadmap.md)).
-- **Planned:** PostgreSQL / MySQL / Snowflake connectors, JoinLint safety
-  integration, and the e-commerce demo (Phases 3-4 of the roadmap).
+- **Planned:** JoinLint adapter integration, Snowflake connector, semantic
+  packs, and ecosystem tooling (Phases 4-5 of the roadmap).
 
 ## Design Documents
 
@@ -83,6 +84,19 @@ from semantic_runtime.core import SemanticRuntime
 runtime = SemanticRuntime.load("examples/ecommerce/semantic_model.yaml")
 context = runtime.resolve_context("Why did revenue drop?")
 print(context.matched_terms)  # ["revenue"]
+```
+
+## Safety
+
+Deterministic safety checks run before any operation; nothing executes
+side-effectful SQL. `validate` defaults to deny: policies must explicitly
+allow an action, and SQL guardrails reject multi-statements and
+`UPDATE`/`DELETE` without `WHERE`:
+
+```python
+runtime.validate("execute.query")                       # allow=True (policy)
+runtime.validate("execute.query", sql="DELETE FROM orders")  # allow=False, UNSAFE_DELETE_NO_WHERE
+runtime.validate_model()                                 # integrity: relations/metrics resolve
 ```
 
 ## Demo
