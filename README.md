@@ -1,5 +1,9 @@
 # Semantic Runtime
 
+[![CI](https://github.com/Chloride233/semantic-runtime/actions/workflows/ci.yml/badge.svg)](https://github.com/Chloride233/semantic-runtime/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB.svg)](pyproject.toml)
+
 Semantic infrastructure layer for AI Agents: semantic understanding,
 context resolution, evidence, and safe execution between models and tools.
 
@@ -56,6 +60,13 @@ The repository is uv-managed for reproducible environments:
 uv sync --extra dev
 uv run pytest -q
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for ground rules, setup, and how to
+propose changes. All participants agree to the
+[Code of Conduct](CODE_OF_CONDUCT.md). Report security issues privately per
+[SECURITY.md](SECURITY.md).
 
 ## License
 

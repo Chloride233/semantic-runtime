@@ -19,6 +19,12 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
+[project.urls]
+Homepage = "https://github.com/Chloride233/semantic-runtime"
+Repository = "https://github.com/Chloride233/semantic-runtime"
+Issues = "https://github.com/Chloride233/semantic-runtime/issues"
+Documentation = "https://github.com/Chloride233/semantic-runtime/tree/main/docs"
+
 [project.optional-dependencies]
 dev = [
   "pytest>=8.3",
