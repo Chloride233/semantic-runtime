@@ -39,7 +39,6 @@ snowflake = ["snowflake-connector-python>=3.10"]
 [tool.hatch.build.targets.wheel]
 packages = ["src/semantic_runtime"]
 include = ["semantic_runtime/packs/*/semantic_model.yaml"]
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]

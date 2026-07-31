@@ -171,21 +171,20 @@ Built-in domain semantic models ship with the package:
 from semantic_runtime.core import SemanticRuntime
 from semantic_runtime.packs import load_pack
 
-runtime = SemanticRuntime(load_pack("ecommerce"))  # ecommerce is available
+runtime = SemanticRuntime(load_pack("ecommerce"))  # ecommerce, saas, finance, game, healthcare
 ```
 
-Load a local pack directory with `load_pack("name", base_dir=path)`.
+Each pack provides entities, relations, metrics, evidence, and policies.
+Load a local community pack directory with `load_pack("name", base_dir=path)`.
 
 ## Demo
 
 ```sh
-python examples/ecommerce/demo.py          # prints the full pipeline
-python examples/ecommerce/demo.py --mcp    # serves the same model over MCP
+python examples/ecommerce/demo.py                      # e-commerce
+python examples/ecommerce/demo.py --pack saas          # any built-in pack
+python examples/ecommerce/demo.py --pack finance --question "What is the portfolio value?"
+python examples/ecommerce/demo.py --mcp                # serve over MCP instead
 ```
-
-Output shows the metric definition, dependencies, affected entities with
-their relations, evidence-backed root cause factors, and operation
-validation for *"Why did revenue decrease last month?"*.
 
 ## Schema Connectors
 

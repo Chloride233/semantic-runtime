@@ -8,7 +8,7 @@ from pathlib import Path
 from semantic_runtime.loaders import load
 from semantic_runtime.loaders.yaml_loader import SemanticModel
 
-PACKS = ("ecommerce",)
+PACKS = ("ecommerce", "saas", "finance", "game", "healthcare")
 
 
 class PackNotFoundError(ValueError):

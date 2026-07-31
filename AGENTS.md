@@ -32,10 +32,12 @@ agent frameworks, databases, or MCP.
   validation, SQL guardrails, model integrity validation, MCP server
   (`python -m semantic_runtime.mcp <model.yaml>`, stdio and streamable HTTP),
   schema connectors (SQLite built-in; PostgreSQL/MySQL/Snowflake via optional
-  extras), the e-commerce semantic pack (`semantic_runtime.packs`), the
-  SafetyProvider extension point, benchmarks, and docker compose quick start.
-- Not yet shipped: JoinLint adapter, plugin system, community packs,
-  Snowflake-verified integration, and scripts tooling; do not claim them.
+  extras), built-in domain packs (`semantic_runtime.packs`: ecommerce, saas,
+  finance, game, healthcare), the SafetyProvider extension point, benchmarks,
+  and docker compose quick start.
+- Not yet shipped: JoinLint adapter, plugin system, third-party community
+  packs, Snowflake-verified integration, and scripts tooling; do not claim
+  them.
 - New runtime behavior must come from the design documents in `docs/`;
   behavior is not invented in code. Docs are updated when implementation
   clarifies or extends them (e.g. new error codes).

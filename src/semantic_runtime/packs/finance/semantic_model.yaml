@@ -1,0 +1,66 @@
+# Finance semantic pack: portfolio and trading metrics.
+entities:
+  - id: account
+    type: business_object
+    name: Account
+    description: A customer account holding portfolios
+  - id: portfolio
+    type: business_object
+    name: Portfolio
+    description: A collection of instruments owned by an account
+  - id: instrument
+    type: business_object
+    name: Instrument
+    description: A tradable security such as a stock or bond
+  - id: trade
+    type: business_object
+    name: Trade
+    description: An executed buy or sell of an instrument
+relations:
+  - source: account
+    target: portfolio
+    type: holds
+    description: An account holds a portfolio
+  - source: portfolio
+    target: instrument
+    type: contains
+    description: A portfolio contains instruments
+  - source: trade
+    target: instrument
+    type: trades
+    description: A trade executes on an instrument
+  - source: trade
+    target: portfolio
+    type: affects
+    description: A trade changes a portfolio position
+metrics:
+  - id: portfolio_value
+    definition: sum of holdings priced at latest market value
+    entity: portfolio
+    unit: USD
+    description: Current market value of a portfolio
+  - id: pnl
+    definition: realized and unrealized gains minus costs
+    entity: portfolio
+    unit: USD
+    depends_on: [portfolio_value]
+    description: Profit and loss over the period
+  - id: sharpe_ratio
+    definition: excess return over risk-free rate divided by return volatility
+    entity: portfolio
+    description: Risk-adjusted return measure
+evidences:
+  - id: ev-pnl-q1
+    statement: Portfolio PnL was positive 4.2% in Q1 2026
+    source: sql:pnl_report
+    status: verified
+    collected_at: 2026-07-31T00:00:00Z
+policies:
+  - id: p-allow-read
+    action: runtime.query
+    effect: allow
+    description: Allow read-only runtime queries
+  - id: p-deny-write
+    action: runtime.mutate
+    effect: deny
+    description: Deny mutations in the demo runtime

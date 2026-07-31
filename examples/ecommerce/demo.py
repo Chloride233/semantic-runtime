@@ -1,12 +1,13 @@
-"""MVP demo: why did revenue decrease last month?
+"""Semantic Runtime demo: resolve a business question with any semantic pack.
 
-Shows the full Semantic Runtime pipeline: semantic pack loading, context
-resolution, metric dependency discovery, relationship resolution, and
-evidence output. Optionally serves the model over MCP (--mcp).
+Shows the full pipeline: semantic pack loading, context resolution, metric
+dependency discovery, relationship resolution, and evidence output.
+Optionally serves the model over MCP (--mcp).
 
 Usage:
     python examples/ecommerce/demo.py
-    python examples/ecommerce/demo.py --mcp
+    python examples/ecommerce/demo.py --pack saas --question "Why did MRR grow last quarter?"
+    python examples/ecommerce/demo.py --pack game --mcp
 """
 
 from __future__ import annotations
@@ -15,17 +16,26 @@ import argparse
 import sys
 
 from semantic_runtime.core import SemanticRuntime
-from semantic_runtime.packs import load_pack
+from semantic_runtime.packs import PACKS, load_pack
 
-QUESTION = "Why did revenue decrease last month?"
+PACK_QUESTIONS = {
+    "ecommerce": "Why did revenue decrease last month?",
+    "saas": "Why did MRR grow last quarter?",
+    "finance": "What is the portfolio value?",
+    "game": "What is the average revenue per paying user?",
+    "healthcare": "What is the readmission rate?",
+}
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Semantic Runtime e-commerce demo")
+    parser = argparse.ArgumentParser(description="Semantic Runtime demo")
     parser.add_argument("--mcp", action="store_true", help="serve the model over MCP (stdio) instead of printing")
+    parser.add_argument("--pack", default="ecommerce", choices=PACKS, help="semantic pack to demo")
+    parser.add_argument("--question", help="question to resolve (defaults to the pack's demo question)")
     args = parser.parse_args(argv)
 
-    runtime = SemanticRuntime(load_pack("ecommerce"))
+    runtime = SemanticRuntime(load_pack(args.pack))
+    question = args.question or PACK_QUESTIONS[args.pack]
 
     if args.mcp:
         from semantic_runtime.mcp import create_server
@@ -33,10 +43,11 @@ def main(argv: list[str] | None = None) -> int:
         create_server(runtime).run()
         return 0
 
-    context = runtime.resolve_context(QUESTION)
+    context = runtime.resolve_context(question)
 
-    print("Semantic Runtime MVP demo")
-    print(f"Question: {QUESTION}")
+    print("Semantic Runtime demo")
+    print(f"Pack: {args.pack}")
+    print(f"Question: {question}")
     print()
 
     if not context.metrics:

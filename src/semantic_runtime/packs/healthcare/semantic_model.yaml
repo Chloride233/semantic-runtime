@@ -1,0 +1,71 @@
+# Healthcare semantic pack: clinical operations metrics.
+# Example model for demonstration; it does not describe a real facility.
+entities:
+  - id: patient
+    type: business_object
+    name: Patient
+    description: A patient receiving care
+  - id: visit
+    type: business_object
+    name: Visit
+    description: A patient encounter at a care facility
+  - id: provider
+    type: business_object
+    name: Provider
+    description: A clinician who handles visits
+  - id: medication
+    type: business_object
+    name: Medication
+    description: A drug prescribed during a visit
+  - id: diagnosis
+    type: business_object
+    name: Diagnosis
+    description: A condition recorded during a visit
+relations:
+  - source: patient
+    target: visit
+    type: attends
+    description: A patient attends visits
+  - source: visit
+    target: diagnosis
+    type: records
+    description: A visit records diagnoses
+  - source: visit
+    target: medication
+    type: prescribes
+    description: A visit prescribes medications
+  - source: provider
+    target: visit
+    type: handles
+    description: A provider handles visits
+metrics:
+  - id: readmission_rate_30d
+    definition: patients readmitted within 30 days divided by discharged patients
+    entity: patient
+    unit: percentage
+    description: Thirty day readmission rate
+  - id: average_length_of_stay
+    definition: total stay days divided by completed visits
+    entity: visit
+    unit: days
+    description: Average length of stay per visit
+  - id: patient_satisfaction
+    definition: average satisfaction score from post-visit surveys
+    entity: visit
+    unit: score
+    description: Average patient satisfaction score
+evidences:
+  - id: ev-readmission-q2
+    statement: Readmission rate was 14% in Q2 2026
+    source: sql:quality_report
+    status: verified
+    collected_at: 2026-07-31T00:00:00Z
+policies:
+  - id: p-allow-read
+    action: runtime.query
+    effect: allow
+    description: Allow read-only runtime queries
+  - id: p-deny-write
+    action: runtime.mutate
+    effect: deny
+    description: Deny mutations in the demo runtime

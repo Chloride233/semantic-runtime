@@ -1,0 +1,75 @@
+# SaaS semantic pack: subscription business metrics.
+entities:
+  - id: tenant
+    type: business_object
+    name: Tenant
+    description: A customer organization with a subscription
+  - id: subscription
+    type: business_object
+    name: Subscription
+    description: A plan a tenant subscribes to, billed periodically
+  - id: invoice
+    type: business_object
+    name: Invoice
+    description: A billing record for a subscription period
+  - id: feature
+    type: business_object
+    name: Feature
+    description: A product capability included in a plan
+  - id: usage_event
+    type: business_object
+    name: Usage Event
+    description: A product usage record attributed to a tenant
+relations:
+  - source: tenant
+    target: subscription
+    type: subscribes_to
+    description: A tenant subscribes to a subscription
+  - source: subscription
+    target: invoice
+    type: bills
+    description: A subscription generates invoices
+  - source: tenant
+    target: usage_event
+    type: tracks
+    description: A tenant produces usage events
+  - source: feature
+    target: subscription
+    type: included_in
+    description: A feature is included in a subscription plan
+metrics:
+  - id: mrr
+    definition: sum of monthly recurring revenue from active subscriptions
+    entity: subscription
+    unit: USD
+    description: Monthly recurring revenue
+  - id: churn_rate
+    definition: cancelled subscriptions divided by starting subscriptions per month
+    entity: tenant
+    unit: percentage
+    description: Share of tenants that cancelled in the month
+  - id: net_revenue_retention
+    definition: recurring revenue from retained tenants divided by prior period revenue
+    entity: tenant
+    unit: percentage
+    depends_on: [mrr]
+    description: Revenue retained and expanded from existing tenants
+  - id: monthly_active_tenants
+    definition: distinct tenants with usage events in the month
+    entity: tenant
+    description: Tenants actively using the product
+evidences:
+  - id: ev-mrr-q2
+    statement: MRR grew 8% in Q2 2026
+    source: sql:mrr_report
+    status: verified
+    collected_at: 2026-07-31T00:00:00Z
+policies:
+  - id: p-allow-read
+    action: runtime.query
+    effect: allow
+    description: Allow read-only runtime queries
+  - id: p-deny-write
+    action: runtime.mutate
+    effect: deny
+    description: Deny mutations in the demo runtime

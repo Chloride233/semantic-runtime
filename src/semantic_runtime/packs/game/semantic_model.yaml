@@ -1,0 +1,65 @@
+# Game analytics semantic pack: player and monetization metrics.
+entities:
+  - id: player
+    type: business_object
+    name: Player
+    description: A player account in the game
+  - id: session
+    type: business_object
+    name: Session
+    description: A play session by a player
+  - id: purchase
+    type: business_object
+    name: Purchase
+    description: An in-game purchase by a player
+  - id: level
+    type: business_object
+    name: Level
+    description: A game level players advance through
+relations:
+  - source: player
+    target: session
+    type: plays
+    description: A player starts sessions
+  - source: session
+    target: level
+    type: advances
+    description: A session advances through levels
+  - source: player
+    target: purchase
+    type: makes
+    description: A player makes purchases
+  - source: purchase
+    target: level
+    type: unlocks
+    description: A purchase unlocks level content
+metrics:
+  - id: daily_active_users
+    definition: distinct players with a session per day
+    entity: player
+    description: Daily active player count
+  - id: arppu
+    definition: revenue divided by paying players in the period
+    entity: player
+    unit: USD
+    description: Average revenue per paying user
+  - id: retention_rate_7d
+    definition: players active on day seven divided by new players on day zero
+    entity: player
+    unit: percentage
+    description: Seven day player retention
+evidences:
+  - id: ev-dau-q2
+    statement: Daily active users declined 5% in Q2 2026
+    source: sql:dau_report
+    status: verified
+    collected_at: 2026-07-31T00:00:00Z
+policies:
+  - id: p-allow-read
+    action: runtime.query
+    effect: allow
+    description: Allow read-only runtime queries
+  - id: p-deny-write
+    action: runtime.mutate
+    effect: deny
+    description: Deny mutations in the demo runtime

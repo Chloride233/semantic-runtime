@@ -22,9 +22,9 @@ def test_pack_path_is_absolute_file():
 
 def test_unknown_pack_raises():
     with pytest.raises(PackNotFoundError, match="unknown semantic pack"):
-        load_pack("finance")
+        load_pack("crypto")
     with pytest.raises(PackNotFoundError, match="unknown semantic pack"):
-        pack_path("finance")
+        pack_path("crypto")
 
 
 def test_load_pack_from_local_dir(tmp_path):
@@ -47,3 +47,15 @@ def test_load_pack_from_local_file(tmp_path):
 def test_load_missing_local_pack_raises(tmp_path):
     with pytest.raises(PackNotFoundError, match="no semantic pack"):
         _load_from(tmp_path, "missing")
+
+
+@pytest.mark.parametrize("pack", ["ecommerce", "saas", "finance", "game", "healthcare"])
+def test_every_pack_loads_and_validates(pack):
+    models = load_pack(pack)
+    runtime = SemanticRuntime(models)
+    assert len(runtime.entities()) >= 4
+    assert len(runtime.relations()) >= 3
+    assert len(runtime.metrics()) >= 2
+    assert len(runtime.policies()) >= 2
+    assert runtime.validate_model().ok
+    assert runtime.resolve_context("revenue OR mrr OR pnl OR players OR readmission").metrics
