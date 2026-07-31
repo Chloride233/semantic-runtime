@@ -85,6 +85,37 @@ context = runtime.resolve_context("Why did revenue drop?")
 print(context.matched_terms)  # ["revenue"]
 ```
 
+## Demo
+
+```sh
+python examples/ecommerce/demo.py          # prints the full pipeline
+python examples/ecommerce/demo.py --mcp    # serves the same model over MCP
+```
+
+## Schema Connectors
+
+Map database schemas into semantic models (tables become entities, foreign
+keys become relations). SQLite works out of the box; PostgreSQL and MySQL
+require their extras:
+
+```python
+from semantic_runtime.connectors import SQLiteConnector, map_schema
+from semantic_runtime.core import SemanticRuntime
+
+schema = SQLiteConnector("shop.db").load_schema()
+runtime = SemanticRuntime(map_schema(schema))
+```
+
+```sh
+pip install 'semantic-runtime[postgres]'   # or [mysql]
+```
+
+```python
+from semantic_runtime.connectors import PostgresConnector, map_schema
+
+schema = PostgresConnector("postgres://user:pass@localhost/shop").load_schema()
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for ground rules, setup, and how to

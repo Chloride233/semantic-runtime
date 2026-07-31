@@ -32,6 +32,8 @@ dev = [
   "pytest-asyncio>=0.24",
   "ruff==0.15.22",
 ]
+postgres = ["psycopg[binary]>=3.1"]
+mysql = ["pymysql>=1.1"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/semantic_runtime"]
@@ -40,6 +42,9 @@ packages = ["src/semantic_runtime"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 asyncio_mode = "auto"
+markers = [
+    "integration: tests requiring external services or subprocesses",
+]
 
 [tool.ruff]
 target-version = "py312"

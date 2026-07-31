@@ -12,6 +12,10 @@ entities:
     type: business_object
     name: Product
     description: A product sold in the catalog
+  - id: payment
+    type: business_object
+    name: Payment
+    description: A payment attempt or completion for an order
   - id: warehouse
     type: business_object
     name: Warehouse
@@ -25,6 +29,10 @@ relations:
     target: product
     type: contains
     description: An order contains products
+  - source: order
+    target: payment
+    type: processes
+    description: An order is settled by payment attempts
   - source: product
     target: warehouse
     type: stored_in

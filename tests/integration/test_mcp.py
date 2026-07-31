@@ -44,7 +44,7 @@ async def test_mcp_list_entities():
             await session.initialize()
             result = await session.call_tool("list_entities", {})
             entities = _collect_items(result)
-            assert {e["id"] for e in entities} == {"customer", "order", "product", "warehouse"}
+            assert {e["id"] for e in entities} == {"customer", "order", "product", "payment", "warehouse"}
 
 
 async def test_mcp_describe_entity_with_relations():
@@ -54,7 +54,7 @@ async def test_mcp_describe_entity_with_relations():
             result = await session.call_tool("describe_entity", {"entity_id": "order"})
             payload = json.loads(result.content[0].text)
             assert payload["id"] == "order"
-            assert {r["type"] for r in payload["relations"]} == {"places", "contains"}
+            assert {r["type"] for r in payload["relations"]} == {"places", "contains", "processes"}
 
 
 async def test_mcp_describe_unknown_entity_returns_error():
