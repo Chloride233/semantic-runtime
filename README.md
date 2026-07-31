@@ -47,8 +47,9 @@ docs/                  design specifications (source of truth)
 src/semantic_runtime/  core runtime packages
   core/  models/  loaders/  context/  safety/  evidence/  mcp/  connectors/
 tests/unit/            unit tests
-tests/integration/     integration tests (MCP server, connectors)
-examples/              demo semantic models (e-commerce model included)
+tests/integration/     integration tests (MCP server, connectors, benchmarks)
+benchmarks/            Level 2 capability + Level 4 safety evaluations
+examples/              demo semantic models (e-commerce demo included)
 scripts/               development tooling (planned)
 ```
 
@@ -72,7 +73,8 @@ uv run pytest -q
 Serve any semantic model to MCP clients over stdio:
 
 ```sh
-python -m semantic_runtime.mcp "$(python -c 'from semantic_runtime.packs import pack_path; print(pack_path("ecommerce"))')"
+python -m semantic_runtime.mcp                                   # e-commerce pack
+python -m semantic_runtime.mcp path/to/semantic_model.yaml       # your model
 ```
 
 Exposes five tools: `list_entities`, `describe_entity`, `get_metric`,
@@ -86,6 +88,23 @@ from semantic_runtime.packs import load_pack
 runtime = SemanticRuntime(load_pack("ecommerce"))
 context = runtime.resolve_context("Why did revenue drop?")
 print(context.matched_terms)  # ["revenue"]
+```
+
+## Benchmarks
+
+Two evaluation harnesses ship in `benchmarks/` (from the
+[Validation and Adoption Plan](docs/Semantic%20Runtime%20Validation%20and%20Adoption%20Plan.md)):
+
+```sh
+python benchmarks/run_benchmark.py      # Level 2: P/R/F1 vs gold sets (ecommerce)
+python benchmarks/run_safety_eval.py    # Level 4: detection / false positive rate
+```
+
+## Docker
+
+```sh
+docker build -t semantic-runtime .
+docker run --rm -i semantic-runtime            # MCP over stdio, e-commerce pack
 ```
 
 ## Safety

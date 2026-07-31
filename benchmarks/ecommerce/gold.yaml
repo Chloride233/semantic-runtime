@@ -1,0 +1,36 @@
+# Gold set for the e-commerce semantic benchmark.
+#
+# Each question lists the entities, relations, metrics, and evidences a
+# correct context resolution should return. Terms in questions must match
+# the deterministic keyword resolver (word-boundary, stopwords ignored).
+questions:
+  - question: "Why did revenue decrease last month?"
+    metrics: [revenue]
+    entities: []
+    relations: []
+    evidences: [ev-revenue-q2]
+  - question: "How does revenue relate to orders?"
+    metrics: [revenue]
+    entities: [order]
+    relations: [customer:places:order, order:contains:product, order:processes:payment]
+    evidences: []
+  - question: "What is the average order value per customer?"
+    metrics: [average_order_value]
+    entities: [customer, order]
+    relations: [customer:places:order]
+    evidences: []
+  - question: "Show evidence for the Q2 revenue drop"
+    metrics: []
+    entities: []
+    relations: []
+    evidences: [ev-revenue-q2]
+  - question: "Which products are stored in which warehouse?"
+    metrics: []
+    entities: [product, warehouse]
+    relations: [product:stored_in:warehouse]
+    evidences: []
+  - question: "Which payments settle an order?"
+    metrics: []
+    entities: [payment, order]
+    relations: [order:processes:payment]
+    evidences: []
