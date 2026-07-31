@@ -18,6 +18,7 @@ class Metric:
     entity: str | None = None
     description: str | None = None
     unit: str | None = None
+    depends_on: tuple[str, ...] = ()
     properties: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -26,3 +27,6 @@ class Metric:
             raise ModelValidationError("Metric", "definition", "definition must be a non-empty string")
         if self.entity is not None:
             _validate_id("Metric", self.entity)
+        for dependency in self.depends_on:
+            if not dependency or not dependency.strip():
+                raise ModelValidationError("Metric", "depends_on", "dependency ids must be non-empty strings")

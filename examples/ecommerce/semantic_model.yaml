@@ -39,6 +39,7 @@ metrics:
     definition: revenue divided by completed orders
     entity: order
     unit: USD
+    depends_on: [revenue]
     description: Average revenue per completed order
 evidences:
   - id: ev-revenue-q2

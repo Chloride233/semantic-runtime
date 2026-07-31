@@ -82,6 +82,23 @@ class SemanticRuntime:
         """Resolve a business question into semantic context."""
         return self._resolver.resolve(question)
 
+    def metric_dependencies(self, metric_id: str) -> list[Metric]:
+        """Metrics this metric transitively depends on, in compute order."""
+        self.metric(metric_id)
+        seen: set[str] = {metric_id}
+        ordered: list[Metric] = []
+
+        def visit(current_id: str) -> None:
+            for dependency_id in self._registry.metric(current_id).depends_on:
+                if dependency_id in seen:
+                    continue
+                seen.add(dependency_id)
+                visit(dependency_id)
+                ordered.append(self._registry.metric(dependency_id))
+
+        visit(metric_id)
+        return ordered
+
     def validate(self, action: str) -> PolicyDecision:
         """Check whether an operation is allowed by policy; default deny."""
         if len(self._registry) == 0:

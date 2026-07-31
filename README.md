@@ -14,12 +14,12 @@ context resolution, evidence, and safe execution between models and tools.
 
 - **Shipped:** repository architecture, package foundation, core data models
   (Entity / Relation / Metric / Evidence / Policy), YAML model loader,
-  registry, graph engine, deterministic context resolver, and the MCP server
-  (Steps 1-7 of the
-  [Core Implementation Plan](docs/Semantic%20Runtime%20Core%20Implementation%20Plan.md)).
-- **Planned:** database connectors, semantic packs, and the e-commerce demo
-  (Milestones 2-4 of the
-  [Implementation Blueprint](docs/Semantic%20Runtime%20Implementation%20Blueprint.md)).
+  registry, graph engine, deterministic context resolver, metric dependency
+  resolution, the MCP server, and schema connectors with SQLite support
+  (Phases 1-3 of the
+  [Future Roadmap](docs/Semantic%20Runtime%20Future%20Roadmap.md)).
+- **Planned:** PostgreSQL / MySQL / Snowflake connectors, JoinLint safety
+  integration, and the e-commerce demo (Phases 3-4 of the roadmap).
 
 ## Design Documents
 
@@ -43,9 +43,9 @@ Superseded v0.1 drafts are archived in [`docs/archive/`](docs/archive/).
 ```
 docs/                  design specifications (source of truth)
 src/semantic_runtime/  core runtime packages
-  core/  models/  loaders/  context/  safety/  evidence/  mcp/
+  core/  models/  loaders/  context/  safety/  evidence/  mcp/  connectors/
 tests/unit/            unit tests
-tests/integration/     integration tests (MCP server interaction)
+tests/integration/     integration tests (MCP server, connectors)
 examples/              demo semantic models (e-commerce model included)
 scripts/               development tooling (planned)
 ```

@@ -52,7 +52,7 @@ def create_server(runtime: SemanticRuntime, name: str = "Semantic Runtime") -> F
 
     @mcp.tool()
     def get_metric(metric_id: str) -> dict:
-        """Retrieve a metric definition and its subject entity."""
+        """Retrieve a metric definition, its dependencies, and subject entity."""
         metric = _safe(runtime.metric, metric_id)
         return {
             "id": metric.id,
@@ -60,6 +60,11 @@ def create_server(runtime: SemanticRuntime, name: str = "Semantic Runtime") -> F
             "entity": metric.entity,
             "description": metric.description,
             "unit": metric.unit,
+            "depends_on": list(metric.depends_on),
+            "dependencies": [
+                {"id": m.id, "definition": m.definition, "entity": m.entity}
+                for m in runtime.metric_dependencies(metric.id)
+            ],
         }
 
     @mcp.tool()

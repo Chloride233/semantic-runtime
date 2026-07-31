@@ -101,3 +101,42 @@ def test_empty_runtime_raises_model_not_loaded():
         runtime.resolve_context("revenue")
     with pytest.raises(ModelNotLoadedError):
         runtime.validate("execute.query")
+
+
+def test_metric_dependencies_transitive():
+    runtime = SemanticRuntime.from_yaml(
+        """
+metrics:
+  - id: margin
+    definition: gross margin ratio
+    entity: order
+    depends_on: [gross_profit, revenue]
+  - id: gross_profit
+    definition: revenue minus cost
+    entity: order
+    depends_on: [revenue]
+  - id: revenue
+    definition: completed payment minus refunds
+    entity: order
+"""
+    )
+    assert [m.id for m in runtime.metric_dependencies("margin")] == [
+        "revenue",
+        "gross_profit",
+    ]
+    assert [m.id for m in runtime.metric_dependencies("revenue")] == []
+
+
+def test_metric_dependencies_handles_cycles():
+    runtime = SemanticRuntime.from_yaml(
+        """
+metrics:
+  - id: a
+    definition: depends on b
+    depends_on: [b]
+  - id: b
+    definition: depends on a
+    depends_on: [a]
+"""
+    )
+    assert {m.id for m in runtime.metric_dependencies("a")} == {"b"}
