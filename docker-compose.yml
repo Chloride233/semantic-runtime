@@ -1,0 +1,19 @@
+services:
+  semantic-runtime:
+    build: .
+    ports:
+      - "8000:8000"
+    command: ["python", "-m", "semantic_runtime.mcp", "--http", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - ./examples/ecommerce:/demo
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/mcp', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

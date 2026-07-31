@@ -107,8 +107,33 @@ python benchmarks/run_safety_eval.py    # Level 4: detection / false positive ra
 ## Docker
 
 ```sh
+docker compose up              # serves the e-commerce pack over streamable HTTP on :8000
+```
+
+```sh
 docker build -t semantic-runtime .
 docker run --rm -i semantic-runtime            # MCP over stdio, e-commerce pack
+```
+
+For an HTTP endpoint instead of stdio:
+
+```sh
+python -m semantic_runtime.mcp --http --port 8000
+```
+
+## Quick Start (five minutes)
+
+1. Install: `pip install 'semantic-runtime[dev]'` (or `uv sync --extra dev`)
+2. Run the MCP server: `python -m semantic_runtime.mcp` (stdio, e-commerce pack)
+3. Wire it into Claude Desktop with
+   [examples/claude_desktop_config.example.json](examples/claude_desktop_config.example.json)
+   (copy the `mcpServers` block into your `claude_desktop_config.json`); Cursor
+   users add the same block to `.cursor/mcp.json`
+4. Ask: *"Why did revenue decrease last month?"*
+5. Generate the demo database for connector experiments:
+
+```sh
+python examples/ecommerce/seed_db.py        # creates examples/ecommerce/shop.db
 ```
 
 ## Safety

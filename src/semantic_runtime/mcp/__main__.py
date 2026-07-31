@@ -1,8 +1,10 @@
-"""CLI entry point: run the Semantic Runtime MCP server over stdio.
+"""CLI entry point: run the Semantic Runtime MCP server.
 
 Usage:
-    python -m semantic_runtime.mcp <model.yaml>   serve a model file
-    python -m semantic_runtime.mcp                serve the e-commerce pack
+    python -m semantic_runtime.mcp <model.yaml>        serve a model over stdio
+    python -m semantic_runtime.mcp                     serve the e-commerce pack
+    python -m semantic_runtime.mcp --http              serve over streamable HTTP
+    python -m semantic_runtime.mcp --http --port 9000  custom port
 """
 
 from __future__ import annotations
@@ -19,9 +21,12 @@ from semantic_runtime.packs import pack_path
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="semantic-runtime-mcp",
-        description="Serve a Semantic Runtime semantic model over MCP (stdio).",
+        description="Serve a Semantic Runtime semantic model over MCP.",
     )
     parser.add_argument("model", nargs="?", help="path to the semantic model YAML file (defaults to e-commerce pack)")
+    parser.add_argument("--http", action="store_true", help="serve over streamable HTTP instead of stdio")
+    parser.add_argument("--host", default="0.0.0.0", help="HTTP bind host (default: 0.0.0.0)")
+    parser.add_argument("--port", type=int, default=8000, help="HTTP port (default: 8000)")
     args = parser.parse_args(argv)
 
     model = Path(args.model) if args.model else pack_path("ecommerce")
@@ -32,7 +37,12 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     server = create_server(runtime)
-    server.run()
+    if args.http:
+        import uvicorn
+
+        uvicorn.run(server.streamable_http_app(), host=args.host, port=args.port)
+    else:
+        server.run()
     return 0
 
 

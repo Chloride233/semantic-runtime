@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "semantic-runtime": {
+      "command": "python",
+      "args": ["-m", "semantic_runtime.mcp"]
+    }
+  }
+}
