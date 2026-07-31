@@ -36,6 +36,7 @@ Specifications live in [`docs/`](docs/); the Obsidian index is
 - [MVP Demo Design](docs/Semantic%20Runtime%20MVP%20Demo%20Design.md) — e-commerce revenue demo
 - [Open Source Strategy](docs/Semantic%20Runtime%20Open%20Source%20Strategy.md) — adoption and ecosystem
 - [Future Roadmap](docs/Semantic%20Runtime%20Future%20Roadmap.md) — Phase 1-5 roadmap
+- [Post v0.1 Roadmap](docs/Semantic%20Runtime%20Post%20v0.1%20Roadmap.md) — Phase 6-10 execution plan, v0.2-v1.0 evolution
 - [Validation and Adoption Plan](docs/Semantic%20Runtime%20Validation%20and%20Adoption%20Plan.md) — real-world validation framework, adoption stages
 
 Superseded v0.1 drafts are archived in [`docs/archive/`](docs/archive/).

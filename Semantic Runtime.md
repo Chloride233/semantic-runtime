@@ -24,6 +24,7 @@ Models provide intelligence. Tools provide capability. **Semantic Runtime provid
 - [[Semantic Runtime PRD]] — 定位、问题、愿景、范围边界
 - [[Semantic Runtime Open Source Strategy]] — 开源定位、采纳策略、生态
 - [[Semantic Runtime Future Roadmap]] — Phase 1-5 路线图
+- [[Semantic Runtime Post v0.1 Roadmap]] — Phase 6-10 执行计划、技术演进 v0.2-v1.0
 
 ### 设计层
 - [[Semantic Runtime Protocol Specification]] — MCP 工具、核心对象、协议原则
